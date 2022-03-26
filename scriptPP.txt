@@ -1,0 +1,24 @@
+node('NodePP') {
+    stage('continuousDownload')
+    {
+        git 'https://github.com/ArkLearnersEdge/maven.git'
+    }
+    stage('contibuild')
+    {
+        sh 'mvn package'
+    }
+    stage('continuousDeploy')
+    {
+      sh 'scp /home/ubuntu/.jenkins/workspace/Dev1_PP/webapp/target/webapp.war ubuntu@172.31.83.167:/var/lib/tomcat8/webapps/testapp'
+    }
+    stage('continuoustesting')
+    {
+       git 'https://github.com/ArkLearnersEdge/FunctionalTesting.git'
+       sh 'java -jar /home/ubuntu/.jenkins/workspace/Dev1_PP/testing.jar'
+    }
+    stage('continuousdelivery')
+    {
+        sh 'scp /home/ubuntu/.jenkins/workspace/Dev1_PP/webapp/target/webapp.war ubuntu@172.31.83.208:/var/lib/tomcat8/webapps/prodapp'
+    }
+    
+}
